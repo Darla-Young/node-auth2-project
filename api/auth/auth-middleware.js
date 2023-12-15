@@ -35,14 +35,19 @@ const only = role_name => (req, res, next) => {
 
 
 const checkUsernameExists = (req, res, next) => {
-  /*
-    If the username in req.body does NOT exist in the database
-    status 401
-    {
-      "message": "Invalid credentials"
-    }
-  */
- next()
+  findBy(req.body.username)
+    .then(user => {
+      if (!user) res.status(401).json({message: "Invalid credentials"})
+      else {
+        req.body = {
+          ...req.body,
+          hash: user.password,
+          role_name: user.role_name,
+          user_id: user.user_id
+        }
+        next()
+      }
+    })
 }
 
 
