@@ -8,20 +8,20 @@ async function find() {
   return users
 }
 
-async function findBy(filter) {
-  const users = await db('users as u')
+async function findBy(username) {
+  const user = await db('users as u')
+  .where('username', '=', username)
   .join('roles as r', 'u.role_id', '=', 'r.role_id')
   .select('user_id', 'username', 'password', 'role_name')
-  .where(filter)
 
-  return users
+  return user[0]
 }
 
 async function findById(user_id) {
   const user = await db('users as u')
-  .join('roles as r', 'u.role_id', '=', 'r.role_id')
-  .select('user_id', 'username', 'role_name')
   .where('user_id', '=', user_id)
+  .join('roles as r', 'u.role_id', '=', 'r.role_id')
+  .select('u.user_id', 'u.username', 'r.role_name')
 
   return user[0]
 }

@@ -1,21 +1,22 @@
-const { JWT_SECRET } = require("../secrets"); // use this secret!
+const { JWT_SECRET } = require("../secrets")
+const express = require('express')
+const bcrypt = require('bcryptjs')
+const { findBy } = require('../users/users-model')
+// const jwt = require('jsonwebtoken')
+const { expressjwt: jwt} = require('express-jwt')
 
 const restricted = (req, res, next) => {
-  /*
-    If the user does not provide a token in the Authorization header:
-    status 401
-    {
-      "message": "Token required"
-    }
+  if (!req.body.token) res.status(401).json({message: 'Token required'})
+  else {
+    jwt({
+      secret: JWT_SECRET, 
+      algorithms: ['HS256'],
+      getToken: function getFromReqBody(req) {return req.body.token},
+      requestProperty: req.body,
+    }) // decoded token avail. on req.auth
 
-    If the provided token does not verify:
-    status 401
-    {
-      "message": "Token invalid"
-    }
-
-    Put the decoded token in the req object, to make life easier for middlewares downstream!
-  */
+    !req.auth.admin ? res.status(401).json({message: 'Token invalid'}) : next()
+  }
 }
 
 const only = role_name => (req, res, next) => {
@@ -29,6 +30,7 @@ const only = role_name => (req, res, next) => {
 
     Pull the decoded token from the req object, to avoid verifying it again!
   */
+ next()
 }
 
 
@@ -40,6 +42,7 @@ const checkUsernameExists = (req, res, next) => {
       "message": "Invalid credentials"
     }
   */
+ next()
 }
 
 
@@ -62,6 +65,7 @@ const validateRoleName = (req, res, next) => {
       "message": "Role name can not be longer than 32 chars"
     }
   */
+ next()
 }
 
 module.exports = {
