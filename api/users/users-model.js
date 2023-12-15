@@ -18,12 +18,12 @@ async function findBy(username) {
 }
 
 async function findById(user_id) {
-  const user = await db('users as u')
+  const userArr = await db('users as u')
   .where('user_id', '=', user_id)
-  .join('roles as r', 'u.role_id', '=', 'r.role_id')
-  .select('u.user_id', 'u.username', 'r.role_name')
+  .join('roles as r', 'u.role_id', 'r.role_id')
+  .select('user_id', 'username', 'role_name', 'password')
 
-  return user[0]
+  return userArr[0]
 }
 
 /*
