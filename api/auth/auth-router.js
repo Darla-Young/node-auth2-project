@@ -37,11 +37,12 @@ router.post("/login", checkUsernameExists, (req, res) => {
 // [POST] /api/auth/register { "username": "anna", "password": "1234", "role_name": "angel" }
 router.post("/register", validateRoleName, (req, res, next) => {
   const creds = {
-    ...req.body,
-    role_name: req.body.role_name.trim() || "",
-    role_id: req.body.role_id || 3
+    username: req.body.username,
+    password: req.body.password,
+    role_name: req.role_name
   }
-  const hash = bcrypt.hashSync(creds.password, 15)
+  // console.log('creds', creds)
+  const hash = bcrypt.hashSync(creds.password, 7)
   creds.password = hash
 
   add(creds)
