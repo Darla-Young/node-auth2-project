@@ -24,7 +24,7 @@ function generateToken(user) {
 router.post("/login", checkUsernameExists, (req, res) => {
   if (bcrypt.compareSync(req.body.password, req.body.hash)) {
     const token = generateToken(req.body)
-    
+
     res.json({
       message: `${req.body.username} is back!`,
       token
@@ -36,8 +36,13 @@ router.post("/login", checkUsernameExists, (req, res) => {
 
 // [POST] /api/auth/register { "username": "anna", "password": "1234", "role_name": "angel" }
 router.post("/register", validateRoleName, (req, res, next) => {
-  const creds = req.body
-  const hash = bcrypt.hashSync(creds.password, 15)
+  const creds = {
+    username: req.body.username,
+    password: req.body.password,
+    role_name: req.role_name
+  }
+  // console.log('creds', creds)
+  const hash = bcrypt.hashSync(creds.password, 7)
   creds.password = hash
 
   add(creds)
